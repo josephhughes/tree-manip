@@ -20,7 +20,7 @@ def custom_help():
     print("\t--keyword [text]\n")
     print("\t--out [output.newick]\n")
 
-if len(sys.argv) == 3 or args.help:
+if len(sys.argv) < 3 or args.help:
   print(custom_help())
   exit(1)
 
@@ -28,17 +28,21 @@ with open(args.tree, 'r') as file:
     data = file.read().replace('\n', '')
 
 data=data.replace("[&R] ","")
-t = Tree(data)
+t = Tree(data,format=1)
 
 keep=0;
+keeping=[]
 for leaf in t:
   # Do some analysis on node
   #print(node.name)
   if args.keyword in leaf.name:
     print(leaf.name)
     keep+=1
-  else:
-    leaf.delete()
+    keeping.append(leaf.name)
+# the following doesn't correctly preserve branch lengths    
+#   else:
+#     leaf.delete()
 print("Keeping ",keep," sequences")
+t.prune(keeping,preserve_branch_length=True)
 
 t.write(format=1, outfile=args.out)
