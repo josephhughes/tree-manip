@@ -10,7 +10,7 @@ import re
 # Loads a tree structure from a newick file
 parser = argparse.ArgumentParser(description="Prune a tree keeping tip labels that contain a particular string", add_help=False)
 parser.add_argument("--tree", help="The newick tree file.\n")
-parser.add_argument("--keyword", help="Keyword to look for in the tip label.\n")
+parser.add_argument("--keyword", help="Keyword to look for in the tip label, can be multiple words comma separated England,Scotland.\n")
 parser.add_argument("--out", help="The output pruned tree in newick format.\n")
 parser.add_argument("-h","--help", action="store_true")
 args = parser.parse_args()
@@ -35,7 +35,9 @@ keeping=[]
 for leaf in t:
   # Do some analysis on node
   #print(node.name)
-  if args.keyword in leaf.name:
+  keywords = args.keyword.split(",")  
+  #if args.keyword in leaf.name:
+  if any(word in leaf.name for word in keywords):
     print(leaf.name)
     keep+=1
     keeping.append(leaf.name)
